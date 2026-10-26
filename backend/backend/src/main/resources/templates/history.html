@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>학습이력 – AutoStudy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .box {
+            background: #fff;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            padding: 32px;
+            width: 100%;
+            box-shadow: var(--shadow);
+        }
+        .box h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; }
+        .sub-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 12px; }
+        .sub-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 28px 0 12px; gap: 12px; flex-wrap: wrap;
+        }
+        .sub-row .sub-title { margin: 0; }
+        .team-select {
+            padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+            font-size: 0.9rem; outline: none; background: #fff; max-width: 100%;
+        }
+
+        .stat-row { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+        .stat {
+            flex: 1; min-width: 120px; border: 1.5px solid var(--border); border-radius: 10px;
+            padding: 16px; background: var(--teal-light); text-align: center;
+        }
+        .stat-num { font-size: 1.5rem; font-weight: 700; color: var(--teal-dark); }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+        .stat-purple { background: #f3e5f5; border-color: #ce93d8; }
+        .stat-purple .stat-num { color: #7b1fa2; }
+        .stat-blue { background: #e3f2fd; border-color: #90caf9; }
+        .stat-blue .stat-num { color: #1565c0; }
+        .stat-yellow { background: #fffde7; border-color: #ffe082; }
+        .stat-yellow .stat-num { color: #f57f17; }
+
+        .h-item {
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1.5px solid var(--border); border-radius: 10px;
+            padding: 14px 18px; margin-bottom: 10px; gap: 12px;
+        }
+        .h-name { font-weight: 600; font-size: 0.92rem; }
+        .h-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+        .h-actions { display: flex; align-items: center; gap: 8px; }
+        .h-btn {
+            padding: 6px 16px; border-radius: 999px; border: 1.5px solid var(--teal);
+            background: #fff; color: var(--teal); font-size: 0.82rem; cursor: pointer;
+        }
+        .h-btn:hover { background: var(--teal); color: #fff; }
+        .h-del {
+            padding: 6px 14px; border-radius: 999px; border: 1.5px solid #ef5350;
+            background: #fff; color: #ef5350; font-size: 0.82rem; cursor: pointer;
+        }
+        .h-del:hover { background: #ef5350; color: #fff; }
+        .h-none { font-size: 0.8rem; color: var(--text-muted); }
+        .score-badge {
+            padding: 4px 12px; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+            background: var(--teal-light); color: var(--teal-dark);
+            border: 1.5px solid var(--teal); white-space: nowrap;
+        }
+        .empty { color: var(--text-muted); font-size: 0.9rem; padding: 20px 0; }
+
+        #resultBox h3 { font-size: 1rem; font-weight: 700; margin: 4px 0 12px; }
+        .result-summary { line-height: 1.7; font-size: 0.9rem; margin-bottom: 24px; }
+        .q-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+        .q-text { font-weight: 600; margin-bottom: 10px; font-size: 0.92rem; }
+        .q-opt { padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; font-size: 0.86rem; }
+        .q-opt:hover { border-color: var(--teal); }
+        .q-opt.correct { background: #e8f5e9; border-color: #66bb6a; }
+        .q-opt.wrong { background: #ffebee; border-color: #ef5350; }
+        .q-exp { margin-top: 8px; padding: 10px 12px; background: var(--teal-light); border-radius: 8px; font-size: 0.84rem; line-height: 1.6; }
+
+        /* 풀이 다시보기 */
+        .review-filter { display: flex; gap: 8px; margin-bottom: 16px; }
+        .rv-chip {
+            padding: 6px 16px; border-radius: 999px; border: 1.5px solid var(--border);
+            font-size: 0.82rem; cursor: pointer; background: #fff; color: var(--text-muted);
+        }
+        .rv-chip:hover { border-color: var(--teal); color: var(--teal); }
+        .rv-chip.selected { background: var(--teal); color: #fff; border-color: var(--teal); }
+        .review-card .q-opt { pointer-events: none; }
+        .q-card-wrong { border-color: #ef5350; }
+        .q-badge {
+            display: inline-block; margin-left: 8px; padding: 1px 10px; border-radius: 999px;
+            font-size: 0.72rem; font-weight: 700; vertical-align: middle;
+        }
+        .q-badge.ok { background: #e8f5e9; color: #2e7d32; }
+        .q-badge.ng { background: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+   <a th:href="@{/home}" class="nav-logo">AutoStudy</a>
+    <div class="nav-menu">
+        <a th:href="@{/home}"
+           th:class="${currentPage == 'home'} ? 'active' : ''">홈</a>
+        <a th:href="@{/quiz}"
+           th:class="${currentPage == 'quiz'} ? 'active' : ''">퀴즈</a>
+        <a th:href="@{/team}"
+           th:class="${currentPage == 'team'} ? 'active' : ''">팀</a>
+    </div>
+    <div class="profile-container">
+        <div class="nav-avatar profile-icon" onclick="toggleMenu()" th:text="${nickname}">DB</div>
+        <div id="profileMenu" class="profile-menu">
+            <div class="menu-item" onclick="changeColor()">프로필 색상 변경</div>
+            <div class="menu-item" onclick="location.href='/logout'">로그아웃</div>
+        </div>
+    </div>
+</nav>
+
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <a th:href="@{/home}"
+           th:class="${currentPage == 'home'} ? 'sidebar-item active' : 'sidebar-item'">홈</a>
+        <a th:href="@{/quiz}"
+           th:class="${currentPage == 'quiz'} ? 'sidebar-item active' : 'sidebar-item'">퀴즈만들기</a>
+        <a th:href="@{/history}"
+           th:class="${currentPage == 'history'} ? 'sidebar-item active' : 'sidebar-item'">학습이력</a>
+        <hr style="border:0; border-top:1px solid #ccc; margin:20px 0;">
+        <a th:href="@{/team}"
+           th:class="${currentPage == 'team'} ? 'sidebar-item active' : 'sidebar-item'">팀</a>
+        <a th:href="@{/team/space}"
+           th:class="${currentPage == 'teamspace'} ? 'sidebar-item active' : 'sidebar-item'">팀 공유 공간</a>
+    </aside>
+
+    <main class="dash-main">
+        <div class="box">
+            <h2>학습 이력</h2>
+
+            <div class="stat-row">
+                <div class="stat stat-purple">
+                    <div class="stat-num" id="statAvg">-</div>
+                    <div class="stat-label">평균 점수</div>
+                </div>
+                <div class="stat stat-blue">
+                    <div class="stat-num" id="statStreak">-</div>
+                    <div class="stat-label">연속 학습일</div>
+                </div>
+                <div class="stat stat-yellow">
+                    <div class="stat-num" id="statCount">-</div>
+                    <div class="stat-label">퀴즈 푼 횟수</div>
+                </div>
+            </div>
+
+            <div class="sub-title">학습한 자료</div>
+            <div id="historyList"><div class="empty">불러오는 중...</div></div>
+
+            <div class="sub-row">
+                <div class="sub-title">풀이 기록</div>
+                <select id="recordFilter" class="team-select" onchange="renderRecords()">
+                    <option value="all">전체 기록</option>
+                    <option value="personal">개인 학습</option>
+                </select>
+            </div>
+            <div id="recordList"><div class="empty">불러오는 중...</div></div>
+        </div>
+
+        <div class="box" id="resultBox" style="display:none; margin-top:24px;"></div>
+    </main>
+</div>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/quiz-result.js}"></script>
+<script>
+let shownId = null;          // 지금 아래에 펼쳐 놓은 퀴즈의 contentId
+let shownRecordId = null;    // 지금 아래에 펼쳐 놓은 풀이 다시보기의 historyId
+let allRecords = [];         // 서버에서 받은 풀이 기록 전체
+
+function toggleMenu() {
+    const menu = document.getElementById('profileMenu');
+    menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+}
+document.addEventListener('DOMContentLoaded', () => {
+    loadProfileColor();
+    loadList();
+    loadRecords();
+});
+function changeColor() {
+    const icon = document.querySelector('.nav-avatar');
+    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+    icon.style.backgroundColor = randomColor;
+    localStorage.setItem('profileColor', randomColor);
+}
+function loadProfileColor() {
+    const savedColor = localStorage.getItem('profileColor');
+    if (savedColor) {
+        const icon = document.querySelector('.nav-avatar');
+        if (icon) icon.style.backgroundColor = savedColor;
+    }
+}
+
+// 퀴즈를 다 풀어서 기록이 저장되면 (quiz-result.js가 호출) 풀이 기록을 새로 불러옴
+function onHistorySaved() {
+    loadRecords();
+}
+
+async function loadList() {
+    const list = document.getElementById('historyList');
+    try {
+        const res = await fetch('/quiz/list');
+        if (res.status === 401) {
+            list.innerHTML = '<div class="empty">로그인이 필요합니다.</div>';
+            return;
+        }
+        const data = await res.json();
+        list.innerHTML = '';
+
+        if (!data.contents || data.contents.length === 0) {
+            list.innerHTML = '<div class="empty">아직 학습한 자료가 없어요. 퀴즈 만들기에서 PDF를 올려보세요.</div>';
+            return;
+        }
+
+        data.contents.forEach(c => {
+            const row = document.createElement('div');
+            row.className = 'h-item';
+
+            const info = document.createElement('div');
+            const name = document.createElement('div');
+            name.className = 'h-name';
+            name.textContent = c.fileName;
+            const meta = document.createElement('div');
+            meta.className = 'h-meta';
+            const date = c.createdAt ? c.createdAt.slice(0, 10) : '-';
+            const parts = [date, c.difficulty ? c.difficulty : '난이도 미설정'];
+            if (c.questionTypes) {
+                parts.push(c.questionTypes.split(',').map(t => t === 'OX' ? 'O/X' : t).join('·'));
+            }
+            if (c.summaryLength) parts.push('요약 ' + c.summaryLength);
+            meta.textContent = parts.join(' · ');
+            info.append(name, meta);
+            row.appendChild(info);
+
+            const actions = document.createElement('div');
+            actions.className = 'h-actions';
+
+            if (c.hasQuiz) {
+                const btn = document.createElement('button');
+                btn.className = 'h-btn';
+                btn.textContent = '퀴즈 보기';
+                btn.onclick = () => showDetail(c.contentId);
+                actions.appendChild(btn);
+            } else {
+                const none = document.createElement('span');
+                none.className = 'h-none';
+                none.textContent = '퀴즈 미생성';
+                actions.appendChild(none);
+            }
+
+            const del = document.createElement('button');
+            del.className = 'h-del';
+            del.textContent = '삭제';
+            del.onclick = () => deleteContent(c);
+            actions.appendChild(del);
+
+            row.appendChild(actions);
+            list.appendChild(row);
+        });
+    } catch (err) {
+        list.innerHTML = '<div class="empty">서버 연결 실패</div>';
+    }
+}
+
+// 서버에서 풀이 기록을 받아와 통계를 채우고, 필터 옵션을 다시 만든 뒤 목록을 그림
+async function loadRecords() {
+    const list = document.getElementById('recordList');
+    try {
+        const res = await fetch('/history/list');
+        if (res.status === 401) {
+            list.innerHTML = '<div class="empty">로그인이 필요합니다.</div>';
+            return;
+        }
+        const data = await res.json();
+
+        allRecords = data.records || [];
+        const hasRecords = allRecords.length > 0;
+        document.getElementById('statAvg').textContent = hasRecords ? data.avg_score + '점' : '-';
+        document.getElementById('statStreak').textContent = data.streak_days + '일';
+        document.getElementById('statCount').textContent = data.total_count + '회';
+
+        rebuildFilter();
+        renderRecords();
+    } catch (err) {
+        list.innerHTML = '<div class="empty">서버 연결 실패</div>';
+    }
+}
+
+// 필터 옵션: 전체 기록 / 개인 학습 / 내가 팀에서 푼 기록이 있는 팀들
+function rebuildFilter() {
+    const select = document.getElementById('recordFilter');
+    const prev = select.value || 'all';
+    select.innerHTML = '';
+
+    const add = (value, text) => {
+        const o = document.createElement('option');
+        o.value = value;
+        o.textContent = text;
+        select.appendChild(o);
+    };
+    add('all', '전체 기록');
+    add('personal', '개인 학습');
+
+    const seen = new Set();
+    allRecords.forEach(r => {
+        if (r.teamId && !seen.has(r.teamId)) {
+            seen.add(r.teamId);
+            add(String(r.teamId), '팀 · ' + r.teamName);
+        }
+    });
+
+    const exists = Array.from(select.options).some(o => o.value === prev);
+    select.value = exists ? prev : 'all';
+}
+
+function renderRecords() {
+    const list = document.getElementById('recordList');
+    const filter = document.getElementById('recordFilter').value;
+
+    list.innerHTML = '';
+    if (allRecords.length === 0) {
+        list.innerHTML = '<div class="empty">아직 푼 퀴즈가 없어요. 위 자료에서 퀴즈를 끝까지 풀면 기록이 남아요.</div>';
+        return;
+    }
+
+    const rows = allRecords.filter(r => {
+        if (filter === 'all') return true;
+        if (filter === 'personal') return !r.teamId;
+        return String(r.teamId) === filter;
+    });
+    if (rows.length === 0) {
+        list.innerHTML = '<div class="empty">선택한 조건에 해당하는 기록이 없어요.</div>';
+        return;
+    }
+
+    rows.forEach(r => {
+        const row = document.createElement('div');
+        row.className = 'h-item';
+
+        const info = document.createElement('div');
+        const name = document.createElement('div');
+        name.className = 'h-name';
+        name.textContent = r.fileName;
+        const meta = document.createElement('div');
+        meta.className = 'h-meta';
+        const when = r.createdAt ? r.createdAt.slice(0, 16).replace('T', ' ') : '-';
+        const scope = r.teamName ? '팀 ' + r.teamName : '개인 학습';
+        const wrongText = r.wrongNos.length > 0
+            ? '틀린 문제 ' + r.wrongNos.join(', ') + '번'
+            : '모두 정답';
+        meta.textContent = `${when} · ${scope} · ${r.correctCount}/${r.totalCount} · ${wrongText}`;
+        info.append(name, meta);
+
+        const actions = document.createElement('div');
+        actions.className = 'h-actions';
+
+        if (r.reviewable) {
+            const btn = document.createElement('button');
+            btn.className = 'h-btn';
+            btn.textContent = '다시 보기';
+            btn.onclick = () => showRecord(r.historyId);
+            actions.appendChild(btn);
+        } else {
+            const none = document.createElement('span');
+            none.className = 'h-none';
+            none.textContent = '다시보기 없음';
+            actions.appendChild(none);
+        }
+
+        const badge = document.createElement('span');
+        badge.className = 'score-badge';
+        badge.textContent = r.score + '점';
+        actions.appendChild(badge);
+
+        const del = document.createElement('button');
+        del.className = 'h-del';
+        del.textContent = '삭제';
+        del.onclick = () => deleteRecord(r);
+        actions.appendChild(del);
+
+        row.append(info, actions);
+        list.appendChild(row);
+    });
+}
+
+async function showDetail(id) {
+    try {
+        const res = await fetch('/quiz/' + id);
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.error || '불러오기에 실패했어요.');
+            return;
+        }
+        shownId = id;
+        shownRecordId = null;
+        renderResult(data);
+    } catch (err) {
+        alert('서버 연결 실패');
+    }
+}
+
+// 풀이 기록 다시보기
+async function showRecord(id) {
+    try {
+        const res = await fetch('/history/' + id);
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.error || '불러오기에 실패했어요.');
+            return;
+        }
+        renderReview(data);
+    } catch (err) {
+        alert('서버 연결 실패');
+    }
+}
+
+function makeChip(text, selected) {
+    const c = document.createElement('span');
+    c.className = 'rv-chip' + (selected ? ' selected' : '');
+    c.textContent = text;
+    return c;
+}
+
+function renderReview(data) {
+    shownId = null;
+    shownRecordId = data.history_id;
+    const box = document.getElementById('resultBox');
+    box.innerHTML = '';
+    const questions = JSON.parse(data.quiz_data);
+    const answers = data.answers;
+    const results = data.results;
+    const wrongCount = data.total_count - data.correct_count;
+
+    const head = document.createElement('h3');
+    head.textContent = `${data.file_name} · 풀이 다시보기`;
+    const info = document.createElement('p');
+    info.className = 'result-summary';
+    const when = data.created_at ? data.created_at.slice(0, 16).replace('T', ' ') : '-';
+    const scope = data.team_name ? '팀 ' + data.team_name : '개인 학습';
+    info.textContent = `${when} · ${scope} · ${data.correct_count}/${data.total_count} 정답 · ${data.score}점`;
+    box.append(head, info);
+
+    const filter = document.createElement('div');
+    filter.className = 'review-filter';
+    const allChip = makeChip(`전체 (${questions.length})`, true);
+    const wrongChip = makeChip(`오답만 (${wrongCount})`, false);
+    filter.append(allChip, wrongChip);
+    box.appendChild(filter);
+
+    const note = document.createElement('div');
+    note.className = 'empty';
+    note.style.display = 'none';
+    note.textContent = '틀린 문제가 없어요. 모두 정답이에요!';
+    box.appendChild(note);
+
+    const cards = [];
+    questions.forEach((q, i) => {
+        const type = q.type || '객관식';
+        const isCorrect = results[i] === true;
+        const given = (answers[i] == null) ? '' : String(answers[i]);
+
+        const card = document.createElement('div');
+        card.className = 'q-card review-card' + (isCorrect ? '' : ' q-card-wrong');
+
+        const qText = document.createElement('div');
+        qText.className = 'q-text';
+        qText.appendChild(makeTypeTag(type));
+        qText.appendChild(document.createTextNode(`Q${i + 1}. ${q.question}`));
+        const badge = document.createElement('span');
+        badge.className = 'q-badge ' + (isCorrect ? 'ok' : 'ng');
+        badge.textContent = isCorrect ? '정답' : '오답';
+        qText.appendChild(badge);
+        card.appendChild(qText);
+
+        if (type === '단답형') {
+            const mine = document.createElement('div');
+            mine.className = 'q-opt ' + (isCorrect ? 'correct' : 'wrong');
+            mine.textContent = '내 답: ' + (given ? given : '(입력 없음)');
+            card.appendChild(mine);
+            if (!isCorrect) {
+                const right = document.createElement('div');
+                right.className = 'q-opt correct';
+                right.textContent = '정답: ' + q.answer;
+                card.appendChild(right);
+            }
+        } else {
+            const picked = (given === '') ? -1 : Number(given);
+            (q.options || []).forEach((opt, j) => {
+                const o = document.createElement('div');
+                o.className = 'q-opt';
+                const tags = [];
+                if (j === q.answer) { o.classList.add('correct'); tags.push('정답'); }
+                if (j === picked) {
+                    tags.push('내 선택');
+                    if (j !== q.answer) o.classList.add('wrong');
+                }
+                const label = type === 'OX' ? opt : `${j + 1}. ${opt}`;
+                o.textContent = label + (tags.length ? '  · ' + tags.join(' / ') : '');
+                card.appendChild(o);
+            });
+        }
+
+        const exp = document.createElement('div');
+        exp.className = 'q-exp';
+        exp.textContent = '해설: ' + q.explanation;
+        card.appendChild(exp);
+
+        box.appendChild(card);
+        cards.push({ card: card, isCorrect: isCorrect });
+    });
+
+    function applyFilter(onlyWrong) {
+        allChip.classList.toggle('selected', !onlyWrong);
+        wrongChip.classList.toggle('selected', onlyWrong);
+        cards.forEach(c => {
+            c.card.style.display = (onlyWrong && c.isCorrect) ? 'none' : 'block';
+        });
+        note.style.display = (onlyWrong && wrongCount === 0) ? 'block' : 'none';
+    }
+    allChip.onclick = () => applyFilter(false);
+    wrongChip.onclick = () => applyFilter(true);
+
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth' });
+}
+
+// 풀이 기록 삭제
+async function deleteRecord(r) {
+    const msg = `이 풀이 기록을 삭제할까요?\n${r.fileName} · ${r.score}점\n평균 점수와 푼 횟수에서도 빠지고, 되돌릴 수 없어요.`;
+    if (!confirm(msg)) return;
+
+    try {
+        const res = await fetch('/history/' + r.historyId, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.error || '삭제에 실패했어요.');
+            return;
+        }
+        if (String(shownRecordId) === String(r.historyId)) {
+            document.getElementById('resultBox').style.display = 'none';
+            shownRecordId = null;
+        }
+        loadRecords();
+    } catch (err) {
+        alert('서버 연결 실패');
+    }
+}
+
+async function deleteContent(c) {
+    let msg = `'${c.fileName}'을(를) 삭제할까요?\n요약, 퀴즈와 이 자료에 남긴 내 풀이 기록이 함께 삭제되고, 되돌릴 수 없어요.`;
+    if (c.teamIds && c.teamIds.length > 0) {
+        msg += `\n${c.teamIds.length}개 팀에 공유 중인 자료라서, 팀원도 더 이상 볼 수 없게 돼요.`;
+    }
+    if (!confirm(msg)) return;
+
+    try {
+        const res = await fetch('/quiz/' + c.contentId, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.error || '삭제에 실패했어요.');
+            return;
+        }
+        if (String(shownId) === String(c.contentId)) {
+            document.getElementById('resultBox').style.display = 'none';
+            shownId = null;
+        }
+        loadList();
+        loadRecords();
+    } catch (err) {
+        alert('서버 연결 실패');
+    }
+}
+</script>
+</body>
+</html>

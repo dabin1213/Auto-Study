@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>팀 공유 공간 – AutoStudy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .box {
+            background: #fff;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            padding: 32px;
+            width: 100%;
+            box-shadow: var(--shadow);
+        }
+        .space-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 12px; flex-wrap: wrap; }
+        .space-head h2 { font-size: 1.2rem; font-weight: 700; margin: 0; }
+        .team-select {
+            padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+            font-size: 0.9rem; outline: none; background: #fff; max-width: 100%;
+        }
+        .btn-fill {
+            padding: 9px 18px; border-radius: 8px; border: none;
+            background: var(--teal); color: #fff; font-size: 0.88rem; font-weight: 700; cursor: pointer;
+        }
+        .btn-fill:hover { background: var(--teal-dark); }
+        .btn-line {
+            padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--teal);
+            background: #fff; color: var(--teal); font-size: 0.8rem; cursor: pointer;
+        }
+        .btn-line:hover { background: var(--teal); color: #fff; }
+        .btn-unshare {
+            padding: 6px 14px; border-radius: 999px; border: 1.5px solid #ef5350;
+            background: #fff; color: #ef5350; font-size: 0.8rem; cursor: pointer;
+        }
+        .btn-unshare:hover { background: #ef5350; color: #fff; }
+
+        .space-grid { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+        .space-main { flex: 1; min-width: 320px; }
+        .space-side { width: 240px; }
+        .side-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; background: var(--teal-light); }
+        .side-card.yellow { background: #fffde7; border-color: #ffe082; }
+        .side-card.yellow .code-text { color: #f57f17; }
+        .side-card.blue { background: #e3f2fd; border-color: #90caf9; }
+        .side-title { font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; }
+        .side-note { font-size: 0.7rem; color: #777; margin-top: 8px; line-height: 1.4; }
+        .member { font-size: 0.88rem; padding: 6px 0; }
+        .member-name { font-weight: 600; }
+        .member-sub { font-size: 0.75rem; color: #555; margin-top: 2px; }
+        .code-text { font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px; }
+
+        .sub-title { font-size: 0.95rem; font-weight: 700; margin: 0 0 12px; }
+        .share-row { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+        .share-row .team-select { flex: 1; min-width: 200px; }
+
+        .c-item {
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1.5px solid var(--border); border-radius: 10px;
+            padding: 14px 18px; margin-bottom: 10px; gap: 12px;
+        }
+        .c-name { font-weight: 600; font-size: 0.92rem; }
+        .c-meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+        .c-stat { font-size: 0.78rem; color: #7b1fa2; margin-top: 4px; }
+        .c-actions { display: flex; align-items: center; gap: 8px; }
+        .c-none { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+        .badge-mine {
+            display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px;
+            background: var(--teal); color: #fff; font-size: 0.7rem; vertical-align: middle;
+        }
+        .empty { color: var(--text-muted); font-size: 0.9rem; padding: 16px 0; }
+
+        #resultBox h3 { font-size: 1rem; font-weight: 700; margin: 4px 0 12px; }
+        .result-summary { line-height: 1.7; font-size: 0.9rem; margin-bottom: 24px; }
+        .q-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+        .q-text { font-weight: 600; margin-bottom: 10px; font-size: 0.92rem; }
+        .q-opt { padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; font-size: 0.86rem; }
+        .q-opt:hover { border-color: var(--teal); }
+        .q-opt.correct { background: #e8f5e9; border-color: #66bb6a; }
+        .q-opt.wrong { background: #ffebee; border-color: #ef5350; }
+        .q-exp { margin-top: 8px; padding: 10px 12px; background: var(--teal-light); border-radius: 8px; font-size: 0.84rem; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+   <a th:href="@{/home}" class="nav-logo">AutoStudy</a>
+    <div class="nav-menu">
+        <a th:href="@{/home}"
+           th:class="${currentPage == 'home'} ? 'active' : ''">홈</a>
+        <a th:href="@{/quiz}"
+           th:class="${currentPage == 'quiz'} ? 'active' : ''">퀴즈</a>
+        <a th:href="@{/team}"
+           th:class="${currentPage == 'team'} ? 'active' : ''">팀</a>
+    </div>
+    <div class="profile-container">
+        <div class="nav-avatar profile-icon" onclick="toggleMenu()" th:text="${nickname}">DB</div>
+        <div id="profileMenu" class="profile-menu">
+            <div class="menu-item" onclick="changeColor()">프로필 색상 변경</div>
+            <div class="menu-item" onclick="location.href='/logout'">로그아웃</div>
+        </div>
+    </div>
+</nav>
+
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <a th:href="@{/home}"
+           th:class="${currentPage == 'home'} ? 'sidebar-item active' : 'sidebar-item'">홈</a>
+        <a th:href="@{/quiz}"
+           th:class="${currentPage == 'quiz'} ? 'sidebar-item active' : 'sidebar-item'">퀴즈만들기</a>
+        <a th:href="@{/history}"
+           th:class="${currentPage == 'history'} ? 'sidebar-item active' : 'sidebar-item'">학습이력</a>
+        <hr style="border:0; border-top:1px solid #ccc; margin:20px 0;">
+        <a th:href="@{/team}"
+           th:class="${currentPage == 'team'} ? 'sidebar-item active' : 'sidebar-item'">팀</a>
+        <a th:href="@{/team/space}"
+           th:class="${currentPage == 'teamspace'} ? 'sidebar-item active' : 'sidebar-item'">팀 공유 공간</a>
+    </aside>
+
+    <main class="dash-main">
+        <div class="box">
+            <div id="msg" class="empty">불러오는 중...</div>
+
+            <div id="spaceWrap" style="display:none;">
+                <div class="space-head">
+                    <h2>팀 공유 공간</h2>
+                    <select id="teamSelect" class="team-select" onchange="changeTeam()"></select>
+                </div>
+
+                <div class="space-grid">
+                    <div class="space-main">
+                        <div class="sub-title">내 자료 공유하기</div>
+                        <div class="share-row">
+                            <select id="shareSelect" class="team-select"></select>
+                            <button class="btn-fill" onclick="shareContent()">공유하기</button>
+                        </div>
+
+                        <div class="sub-title">공유된 자료</div>
+                        <div id="contentList"></div>
+                    </div>
+
+                    <div class="space-side">
+                        <div class="side-card yellow">
+                            <div class="side-title">초대 코드</div>
+                            <div class="code-text" id="inviteText">-</div>
+                            <button class="btn-line" onclick="copyInvite(this)">코드 복사</button>
+                        </div>
+                        <div class="side-card blue">
+                            <div class="side-title">멤버 현황 (<span id="memberCount">0</span>명)</div>
+                            <div id="memberList"></div>
+                            <div class="side-note">팀 공유 공간에서 푼 결과만 집계돼요. 개인 학습 기록은 공유되지 않아요.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box" id="resultBox" style="display:none; margin-top:24px;"></div>
+    </main>
+</div>
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/quiz-result.js}"></script>
+<script>
+let teams = [];
+let currentTeamId = null;
+let shownContentId = null;   // 지금 아래에 펼쳐 놓은 퀴즈의 contentId
+
+function toggleMenu() {
+    const menu = document.getElementById('profileMenu');
+    menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+}
+document.addEventListener('DOMContentLoaded', init);
+function changeColor() {
+    const icon = document.querySelector('.nav-avatar');
+    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+    icon.style.backgroundColor = randomColor;
+    localStorage.setItem('profileColor', randomColor);
+}
+function loadProfileColor() {
+    const savedColor = localStorage.getItem('profileColor');
+    if (savedColor) {
+        const icon = document.querySelector('.nav-avatar');
+        if (icon) icon.style.backgroundColor = savedColor;
+    }
+}
+
+// 퀴즈를 다 풀어서 기록이 저장되면 (quiz-result.js가 호출) 팀 결과를 새로 불러옴
+function onHistorySaved() {
+    loadResults();
+}
+
+function emptyDiv(text) {
+    const d = document.createElement('div');
+    d.className = 'empty';
+    d.textContent = text;
+    return d;
+}
+
+async function init() {
+    loadProfileColor();
+    const msg = document.getElementById('msg');
+    try {
+        const res = await fetch('/team/list');
+        if (res.status === 401) {
+            msg.textContent = '로그인이 필요합니다.';
+            return;
+        }
+        const data = await res.json();
+        teams = data.teams || [];
+        if (teams.length === 0) {
+            msg.textContent = '참가한 팀이 없어요. 팀 화면에서 팀을 만들거나 초대 코드로 참가해보세요.';
+            return;
+        }
+
+        const select = document.getElementById('teamSelect');
+        teams.forEach(t => {
+            const o = document.createElement('option');
+            o.value = t.teamId;
+            o.textContent = t.teamName;
+            select.appendChild(o);
+        });
+
+        const urlId = new URLSearchParams(location.search).get('teamId');
+        const found = teams.find(t => String(t.teamId) === urlId);
+        currentTeamId = found ? found.teamId : teams[0].teamId;
+        select.value = currentTeamId;
+
+        msg.style.display = 'none';
+        document.getElementById('spaceWrap').style.display = 'block';
+        await loadSpace();
+        await loadMyContents();
+    } catch (err) {
+        msg.textContent = '서버 연결 실패';
+    }
+}
+
+async function changeTeam() {
+    currentTeamId = document.getElementById('teamSelect').value;
+    window.history.replaceState(null, '', '/team/space?teamId=' + currentTeamId);
+    document.getElementById('resultBox').style.display = 'none';
+    shownContentId = null;
+    await loadSpace();
+    await loadMyContents();
+}
+
+async function loadSpace() {
+    const list = document.getElementById('contentList');
+    list.innerHTML = '';
+    list.appendChild(emptyDiv('불러오는 중...'));
+    try {
+        const res = await fetch('/team/' + currentTeamId + '/contents');
+        const data = await res.json();
+        list.innerHTML = '';
+        if (!res.ok) {
+            list.appendChild(emptyDiv(data.message || data.error || '불러오기에 실패했어요.'));
+            return;
+        }
+        document.getElementById('inviteText').textContent = data.invite_code;
+        renderMembers(data.members);
+        renderContents(data.contents);
+        loadResults();   // 팀원별 점수와 자료별 풀이 현황
+    } catch (err) {
+        list.innerHTML = '';
+        list.appendChild(emptyDiv('서버 연결 실패'));
+    }
+}
+
+// 멤버 이름만 먼저 보여줌 (점수는 loadResults가 채움)
+function renderMembers(members) {
+    const box = document.getElementById('memberList');
+    box.innerHTML = '';
+    document.getElementById('memberCount').textContent = members.length;
+    members.forEach(m => {
+        const d = document.createElement('div');
+        d.className = 'member';
+        d.textContent = m.nickname + (m.me ? ' (나)' : '');
+        box.appendChild(d);
+    });
+}
+
+// 퀴즈 결과 공유: 팀원별 점수 순위
+function renderRanking(members) {
+    const box = document.getElementById('memberList');
+    box.innerHTML = '';
+    document.getElementById('memberCount').textContent = members.length;
+    members.forEach(m => {
+        const d = document.createElement('div');
+        d.className = 'member';
+
+        const name = document.createElement('div');
+        name.className = 'member-name';
+        name.textContent = (m.rank ? m.rank + '. ' : '') + m.nickname + (m.me ? ' (나)' : '');
+
+        const sub = document.createElement('div');
+        sub.className = 'member-sub';
+        sub.textContent = m.solvedCount > 0
+            ? `평균 ${m.avgScore}점 · 최고 ${m.bestScore}점 · ${m.solvedCount}회`
+            : '아직 푼 퀴즈가 없어요';
+
+        d.append(name, sub);
+        box.appendChild(d);
+    });
+}
+
+// 공유된 자료마다 팀 풀이 현황 표시
+function fillContentStats(stats) {
+    document.querySelectorAll('.c-stat').forEach(el => {
+        el.textContent = '아직 아무도 풀지 않았어요';
+    });
+    stats.forEach(s => {
+        const el = document.getElementById('stat-' + s.contentId);
+        if (el) {
+            el.textContent = `${s.solverCount}명이 풀었어요 · 평균 ${s.avgScore}점 · 총 ${s.attemptCount}회`;
+        }
+    });
+}
+
+async function loadResults() {
+    const teamId = currentTeamId;
+    try {
+        const res = await fetch('/team/' + teamId + '/results');
+        if (!res.ok || String(teamId) !== String(currentTeamId)) return;   // 그 사이 다른 팀으로 바꿨으면 무시
+        const data = await res.json();
+        renderRanking(data.members);
+        fillContentStats(data.contents);
+    } catch (err) {
+        // 결과를 못 불러와도 화면은 계속 사용 가능
+    }
+}
+
+function renderContents(contents) {
+    const list = document.getElementById('contentList');
+    if (contents.length === 0) {
+        list.appendChild(emptyDiv('아직 공유된 자료가 없어요. 위에서 내 자료를 공유해보세요.'));
+        return;
+    }
+    contents.forEach(c => {
+        const row = document.createElement('div');
+        row.className = 'c-item';
+
+        const info = document.createElement('div');
+        const name = document.createElement('div');
+        name.className = 'c-name';
+        name.textContent = c.fileName;
+        if (c.mine) {
+            const badge = document.createElement('span');
+            badge.className = 'badge-mine';
+            badge.textContent = '내 자료';
+            name.appendChild(badge);
+        }
+        const meta = document.createElement('div');
+        meta.className = 'c-meta';
+        const date = c.createdAt ? c.createdAt.slice(0, 10) : '-';
+        meta.textContent = `${c.owner} · ${c.difficulty ? c.difficulty : '난이도 미설정'} · ${date}`;
+        const stat = document.createElement('div');
+        stat.className = 'c-stat';
+        stat.id = 'stat-' + c.contentId;
+        stat.textContent = '결과 불러오는 중...';
+        info.append(name, meta, stat);
+        row.appendChild(info);
+
+        const actions = document.createElement('div');
+        actions.className = 'c-actions';
+
+        if (c.hasQuiz) {
+            const btn = document.createElement('button');
+            btn.className = 'btn-line';
+            btn.textContent = '퀴즈 보기';
+            btn.onclick = () => showDetail(c.contentId);
+            actions.appendChild(btn);
+        } else {
+            const none = document.createElement('span');
+            none.className = 'c-none';
+            none.textContent = '퀴즈 미생성';
+            actions.appendChild(none);
+        }
+
+        // 내가 공유한 자료만 이 팀에서 공유 해제할 수 있음
+        if (c.mine) {
+            const un = document.createElement('button');
+            un.className = 'btn-unshare';
+            un.textContent = '공유 해제';
+            un.onclick = () => unshareContent(c);
+            actions.appendChild(un);
+        }
+
+        row.appendChild(actions);
+        list.appendChild(row);
+    });
+}
+
+// 공유할 수 있는 내 자료: 퀴즈가 있고, 이 팀에 아직 공유하지 않은 것
+async function loadMyContents() {
+    const select = document.getElementById('shareSelect');
+    select.innerHTML = '';
+    try {
+        const res = await fetch('/quiz/list');
+        if (!res.ok) return;
+        const data = await res.json();
+        const candidates = (data.contents || [])
+            .filter(c => c.hasQuiz && !(c.teamIds || []).includes(Number(currentTeamId)));
+
+        if (candidates.length === 0) {
+            const o = document.createElement('option');
+            o.value = '';
+            o.textContent = '공유할 수 있는 퀴즈가 없어요';
+            select.appendChild(o);
+            return;
+        }
+        candidates.forEach(c => {
+            const o = document.createElement('option');
+            o.value = c.contentId;
+            const n = (c.teamIds || []).length;
+            o.textContent = c.fileName + (n > 0 ? ` (${n}개 팀에 공유 중)` : '');
+            select.appendChild(o);
+        });
+    } catch (err) {
+        // 목록을 못 불러와도 화면은 계속 사용 가능
+    }
+}
+
+async function shareContent() {
+    const select = document.getElementById('shareSelect');
+    const contentId = select.value;
+    if (!contentId) {
+        alert('공유할 자료를 선택해주세요.');
+        return;
+    }
+    try {
+        const res = await fetch('/team/' + currentTeamId + '/share', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contentId: Number(contentId) })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.message || data.error || '공유에 실패했어요.');
+            return;
+        }
+        alert('팀에 공유했어요!');
+        await loadSpace();
+        await loadMyContents();
+    } catch (err) {
+        alert('서버 연결 실패');
+    }
+}
+
+// 이 팀에서만 공유 해제 (내 자료와 다른 팀 공유는 그대로)
+async function unshareContent(c) {
+    const msg = `'${c.fileName}'을(를) 이 팀에서 공유 해제할까요?\n` +
+        '팀원은 더 이상 이 자료를 볼 수 없게 돼요. (내 자료와 다른 팀에 공유한 것은 그대로예요)';
+    if (!confirm(msg)) return;
+
+    try {
+        const res = await fetch('/team/' + currentTeamId + '/share/' + c.contentId, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.message || data.error || '공유 해제에 실패했어요.');
+            return;
+        }
+        if (String(shownContentId) === String(c.contentId)) {
+            document.getElementById('resultBox').style.display = 'none';
+            shownContentId = null;
+        }
+        await loadSpace();
+        await loadMyContents();
+    } catch (err) {
+        alert('서버 연결 실패');
+    }
+}
+
+async function copyInvite(btn) {
+    const code = document.getElementById('inviteText').textContent;
+    try {
+        await navigator.clipboard.writeText(code);
+        const original = btn.textContent;
+        btn.textContent = '복사됨 ✓';
+        setTimeout(() => { btn.textContent = original; }, 1500);
+    } catch (err) {
+        prompt('초대코드를 복사하세요', code);
+    }
+}
+
+async function showDetail(id) {
+    try {
+        const res = await fetch('/quiz/' + id);
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.error || '불러오기에 실패했어요.');
+            return;
+        }
+        shownContentId = id;
+        data.solved_team_id = currentTeamId;   // 팀 공유 공간에서 푼 기록으로 표시
+        renderResult(data);
+    } catch (err) {
+        alert('서버 연결 실패');
+    }
+}
+</script>
+</body>
+</html>

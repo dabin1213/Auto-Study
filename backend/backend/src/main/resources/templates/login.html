@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Auto Study 로그인</title>
+   <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body class="login-body">
+    <div class="login-wrapper">
+        <h2>Auto study</h2>
+        <p>AI 기반 학습 플랫폼</p>
+        
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="이메일 주소" required>
+            <input type="password" id="password" placeholder="비밀번호" required>
+            
+            <a href="/find-password" class="find-password-link">비밀번호를 잊으셨나요?</a>
+            <button type="button" class="login-btn" onclick="loginRequest()">로그인</button>
+        </form>
+        
+       <a href="/oauth2/authorization/google" class="google-btn">Google 계정으로 로그인</a>
+        <div class="signup-link">계정이 없으신가요? <a href="/signup">회원가입</a></div>
+    </div>
+</body>
+    <script>
+        function loginRequest() {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                alert("이메일과 비밀번호를 모두 입력해주세요.");
+                return;
+            }
+
+            fetch('/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = "/home";
+                } else {
+                    alert("이메일 또는 비밀번호가 잘못되었습니다.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("서버 연결에 실패했습니다.");
+            });
+        }
+    </script>
+    </body>
+</html>

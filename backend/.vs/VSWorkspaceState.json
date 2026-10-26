@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\backend",
+    "\\backend\\src",
+    "\\backend\\src\\main",
+    "\\backend\\src\\main\\java",
+    "\\backend\\src\\test",
+    "\\backend\\src\\test\\java",
+    "\\backend\\src\\test\\java\\com",
+    "\\backend\\src\\test\\java\\com\\example",
+    "\\backend\\src\\test\\java\\com\\example\\backend"
+  ],
+  "SelectedNode": "\\backend\\src\\main\\java\\com\\example\\backend\\config\\WebConfig.java",
+  "PreviewInSolutionExplorer": false
+}

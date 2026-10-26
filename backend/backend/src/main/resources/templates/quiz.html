@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>퀴즈 만들기 – AutoStudy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .quiz-create-box {
+            background: #fff;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            padding: 32px;
+            width: 100%;
+            box-shadow: var(--shadow);
+        }
+        .quiz-create-box h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            cursor: pointer;
+            margin-bottom: 24px;
+            transition: border-color .2s, background .2s;
+            width: 100%;
+            display: block;
+        }
+        .upload-area:hover {
+            border-color: var(--teal);
+            background: var(--teal-light);
+        }
+        .upload-area.busy { opacity: .6; pointer-events: none; }
+        .upload-area .upload-icon { font-size: 2rem; margin-bottom: 8px; }
+        .option-row {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+        .option-group { display: flex; flex-direction: column; gap: 8px; }
+        .option-label { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; }
+        .chip-group { display: flex; gap: 8px; }
+        .chip {
+            padding: 6px 16px;
+            border-radius: 999px;
+            border: 1.5px solid var(--border);
+            font-size: 0.82rem;
+            cursor: pointer;
+            background: #fff;
+            color: var(--text-muted);
+            transition: all .15s;
+        }
+        .chip:hover { border-color: var(--teal); color: var(--teal); }
+        .chip.selected { background: var(--teal); color: #fff; border-color: var(--teal); }
+        .chip.selected-soft { background: #f3e5f5; color: #7b1fa2; border-color: #ce93d8; }
+        .count-input {
+            width: 64px;
+            padding: 6px 10px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            outline: none;
+        }
+        .count-input:focus { border-color: var(--teal); }
+        .generate-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--teal);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background .2s;
+        }
+        .generate-btn:hover { background: var(--teal-dark); }
+        .generate-btn:disabled { opacity: .6; cursor: not-allowed; }
+        .gen-hint { font-size: 0.78rem; color: var(--text-muted); text-align: center; margin-top: 8px; }
+
+        /* 결과 영역 */
+        #resultBox h3 { font-size: 1rem; font-weight: 700; margin: 4px 0 12px; }
+        .result-summary { line-height: 1.7; font-size: 0.9rem; margin-bottom: 24px; }
+        .q-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+        .q-text { font-weight: 600; margin-bottom: 10px; font-size: 0.92rem; }
+        .q-opt { padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; font-size: 0.86rem; }
+        .q-opt:hover { border-color: var(--teal); }
+        .q-opt.correct { background: #e8f5e9; border-color: #66bb6a; }
+        .q-opt.wrong { background: #ffebee; border-color: #ef5350; }
+        .q-exp { margin-top: 8px; padding: 10px 12px; background: var(--teal-light); border-radius: 8px; font-size: 0.84rem; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+   <a th:href="@{/home}" class="nav-logo">AutoStudy</a>
+    <div class="nav-menu">
+        <a th:href="@{/home}"
+           th:class="${currentPage == 'home'} ? 'active' : ''">홈</a>
+        <a th:href="@{/quiz}"
+           th:class="${currentPage == 'quiz'} ? 'active' : ''">퀴즈</a>
+        <a th:href="@{/team}"
+           th:class="${currentPage == 'team'} ? 'active' : ''">팀</a>
+    </div>
+    <div class="profile-container">
+        <div class="nav-avatar profile-icon" onclick="toggleMenu()" th:text="${nickname}">DB</div>
+        <div id="profileMenu" class="profile-menu">
+            <div class="menu-item" onclick="changeColor()">프로필 색상 변경</div>
+            <div class="menu-item" onclick="location.href='/logout'">로그아웃</div>
+        </div>
+    </div>
+</nav>
+
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <a th:href="@{/home}"
+           th:class="${currentPage == 'home'} ? 'sidebar-item active' : 'sidebar-item'">홈</a>
+        <a th:href="@{/quiz}"
+           th:class="${currentPage == 'quiz'} ? 'sidebar-item active' : 'sidebar-item'">퀴즈만들기</a>
+        <a th:href="@{/history}"
+           th:class="${currentPage == 'history'} ? 'sidebar-item active' : 'sidebar-item'">학습이력</a>
+        <hr style="border:0; border-top:1px solid #ccc; margin:20px 0;">
+        <a th:href="@{/team}"
+           th:class="${currentPage == 'team'} ? 'sidebar-item active' : 'sidebar-item'">팀</a>
+        <a th:href="@{/team/space}"
+           th:class="${currentPage == 'teamspace'} ? 'sidebar-item active' : 'sidebar-item'">팀 공유 공간</a>
+    </aside>
+
+    <main class="dash-main">
+        <div class="quiz-create-box">
+            <h2>새 퀴즈 만들기</h2>
+
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📁</div>
+                <div id="uploadText">PDF 파일 업로드 (최대 100MB)</div>
+                <div id="uploadSub" style="margin-top:6px;">글자를 읽을 수 있는 PDF만 가능해요 (스캔한 이미지 PDF는 안 돼요)</div>
+                <input type="file" id="fileInput" accept=".pdf,application/pdf" style="display:none" onchange="handleFile(event)">
+            </div>
+
+    
+            <div class="option-row">
+                <div class="option-group">
+                    <div class="option-label">요약 길이</div>
+                    <div class="chip-group">
+                        <span class="chip" onclick="selectChip(this,'length')">짧게</span>
+                        <span class="chip" onclick="selectChip(this,'length')">중간</span>
+                        <span class="chip selected" onclick="selectChip(this,'length')">길게</span>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <div class="option-label">퀴즈 난이도</div>
+                    <div class="chip-group">
+                        <span class="chip" onclick="selectChip(this,'level')">초급</span>
+                        <span class="chip" onclick="selectChip(this,'level')">중급</span>
+                        <span class="chip selected" onclick="selectChip(this,'level')">고급</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="option-row">
+                <div class="option-group">
+                    <div class="option-label">문제 유형 (여러 개 선택 가능)</div>
+                    <div class="chip-group">
+                        <span class="chip" onclick="selectType(this)">객관식</span>
+                        <span class="chip" onclick="selectType(this)">단답형</span>
+                        <span class="chip selected" onclick="selectType(this)">O/X</span>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <div class="option-label">문제 개수</div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <input type="number" class="count-input" id="questionCount" value="10" min="1" max="50">
+                        <span style="font-size:0.85rem;color:var(--text-muted);">문항</span>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" id="uploadedContentId" value="">
+            <button class="generate-btn" id="generateBtn" onclick="generateQuiz()">AI로 퀴즈 생성하기</button>
+            <div class="gen-hint">문제 수와 요약 길이에 따라 10초~1분 정도 걸리고, 서버가 바쁘면 더 걸릴 수 있어요.</div>
+        </div>
+
+        <div class="quiz-create-box" id="resultBox" style="display:none; margin-top:24px;"></div>
+    </main>
+</div>
+
+<script th:src="@{/js/common.js}"></script>
+<script th:src="@{/js/quiz-result.js}"></script>
+<script>
+const MAX_UPLOAD_MB = 100;
+let uploading = false;
+
+function toggleMenu() {
+    const menu = document.getElementById('profileMenu');
+    menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+}
+document.addEventListener('DOMContentLoaded', loadProfileColor);
+function changeColor() {
+    const icon = document.querySelector('.nav-avatar');
+    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+    icon.style.backgroundColor = randomColor;
+    localStorage.setItem('profileColor', randomColor);
+}
+function loadProfileColor() {
+    const savedColor = localStorage.getItem('profileColor');
+    if (savedColor) {
+        const icon = document.querySelector('.nav-avatar');
+        if (icon) {
+            icon.style.backgroundColor = savedColor;
+        }
+    }
+}
+
+function selectChip(el, group) {
+    document.querySelectorAll(`[onclick*="'${group}'"]`).forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function selectType(el) {
+    el.classList.toggle('selected');
+}
+
+// 응답이 JSON이 아니어도(413 등) 터지지 않게 읽기
+async function readJson(res) {
+    try {
+        return await res.json();
+    } catch (err) {
+        return {};
+    }
+}
+
+async function handleFile(e) {
+    const input = e.target;
+    const file = input.files[0];
+    if (!file) return;
+
+    const sub = document.getElementById('uploadSub');
+    const area = document.getElementById('uploadArea');
+    document.getElementById('uploadText').textContent = `📄 ${file.name}`;
+    document.getElementById('uploadedContentId').value = '';
+
+    // 서버에 보내기 전에 먼저 검사 (확장자, 용량)
+    if (!file.name.toLowerCase().endsWith('.pdf')) {
+        sub.textContent = '❌ PDF 파일만 업로드할 수 있어요.';
+        input.value = '';
+        return;
+    }
+    if (file.size > MAX_UPLOAD_MB * 1024 * 1024) {
+        sub.textContent = `❌ 파일 크기는 ${MAX_UPLOAD_MB}MB 이하여야 해요. (현재 ${(file.size / 1024 / 1024).toFixed(1)}MB)`;
+        input.value = '';
+        return;
+    }
+
+    uploading = true;
+    area.classList.add('busy');
+    sub.textContent = '⏳ 파일 업로드 및 텍스트 추출 중... 잠시만 기다려주세요';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await readJson(res);
+        if (res.ok) {
+            sub.textContent = '✅ 업로드 완료 · 이제 옵션을 고르고 퀴즈를 생성하세요';
+            document.getElementById('uploadedContentId').value = data.contentId;
+        } else {
+            sub.textContent = '❌ ' + (data.message || data.error || '업로드에 실패했어요.');
+        }
+    } catch (err) {
+        sub.textContent = '❌ 서버 연결 실패';
+    } finally {
+        uploading = false;
+        area.classList.remove('busy');
+        input.value = '';   // 같은 파일을 다시 골라도 동작하게
+    }
+}
+
+async function generateQuiz() {
+    if (uploading) {
+        alert('파일 업로드가 끝난 뒤에 눌러주세요.');
+        return;
+    }
+    const contentId = document.getElementById('uploadedContentId').value;
+    const count = parseInt(document.getElementById('questionCount').value, 10);
+    const difficulty = document.querySelector('.chip.selected[onclick*="level"]').textContent.trim();
+    const summaryLength = document.querySelector('.chip.selected[onclick*="length"]').textContent.trim();
+    const questionTypes = Array.from(document.querySelectorAll('.chip.selected[onclick*="selectType"]'))
+        .map(c => c.textContent.trim());
+
+    if (!contentId) {
+        alert('PDF 파일을 먼저 업로드해주세요. (텍스트 직접 입력은 아직 지원하지 않아요)');
+        return;
+    }
+    if (questionTypes.length === 0) {
+        alert('문제 유형을 선택해주세요.');
+        return;
+    }
+    if (!count || count <= 0) {
+        alert('문제 개수를 1개 이상 입력해주세요.');
+        return;
+    }
+    if (count > 50) {
+        alert('문제 개수는 50개 이하로 입력해주세요.');
+        return;
+    }
+    if (count < questionTypes.length) {
+        alert(`문제 개수는 선택한 문제 유형 수(${questionTypes.length}개) 이상이어야 해요.`);
+        return;
+    }
+
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    let sec = 0;
+    btn.textContent = 'AI가 생성 중... 0초';
+    const timer = setInterval(() => {
+        sec++;
+        btn.textContent = `AI가 생성 중... ${sec}초`;
+    }, 1000);
+
+    try {
+        const res = await fetch('/quiz/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contentId: Number(contentId),
+                difficulty: difficulty,
+                summaryLength: summaryLength,
+                questionTypes: questionTypes,
+                count: count
+            }),
+            signal: AbortSignal.timeout(180000)   // 3분 넘게 응답이 없으면 중단
+        });
+        const data = await readJson(res);
+        if (!res.ok) {
+            alert(data.message || data.error || '퀴즈 생성에 실패했어요.');
+            return;
+        }
+        renderResult(data);
+    } catch (err) {
+        if (err && err.name === 'TimeoutError') {
+            alert('응답이 너무 오래 걸려서 중단했어요. 잠시 후 다시 시도해주세요.');
+        } else {
+            alert('서버 연결 실패');
+        }
+    } finally {
+        clearInterval(timer);
+        btn.disabled = false;
+        btn.textContent = 'AI로 퀴즈 생성하기';
+    }
+}
+</script>
+</body>
+</html>

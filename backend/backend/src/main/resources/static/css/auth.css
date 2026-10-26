@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Outfit:wght@400;600;700&display=swap');
+
+:root {
+    --teal: #2A8C8C; --teal-dark: #1E6B6B; --teal-light: #E8F5F5;
+    --text: #1a2a2a; --text-muted: #6b8a8a; --border: #c8e0e0;
+    --bg: #f4fafa; --white: #ffffff;
+    --shadow: 0 4px 20px rgba(42,140,140,0.12);
+    --radius: 12px; --radius-sm: 8px;
+}
+
+/* 로그인 페이지만 타겟팅 */
+.login-body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.login-body * { box-sizing: border-box; }
+
+.login-body input {
+    width: 100%;
+    padding: 15px;
+    margin: 8px 0 15px 0;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+}
+
+.login-body label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    text-align: left;
+}
+
+.login-body .login-wrapper {
+    background: var(--white);
+    padding: 60px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.login-body .login-wrapper h2 { font-size: 2.2rem; margin-bottom: 8px; color: var(--teal); }
+.login-body .login-wrapper p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px; }
+
+.login-body .login-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--teal);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.login-body .login-btn:hover { background-color: var(--teal-dark); }
+
+.login-body .google-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.login-body .signup-link { margin-top: 20px; font-size: 1rem; }
+
+.login-body .find-password-link {
+    display: block;
+    text-align: right;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+.login-body .find-password-link:hover { color: var(--teal); text-decoration: underline; }
+
+.login-body .google-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: white;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-body .google-btn:hover {
+    background-color: #f9f9f9;
+}

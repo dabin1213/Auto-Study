@@ -1,0 +1,211 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\static\\dashboard.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\resources\\static\\dashboard.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\static\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\resources\\static\\css\\style.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\static\\index.html||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\resources\\static\\index.html||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\config\\WebConfig.java||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\java\\com\\example\\backend\\config\\WebConfig.java||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\AuthController.java||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\java\\com\\example\\backend\\AuthController.java||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\UserRepository.java||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\java\\com\\example\\backend\\UserRepository.java||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\SignupRequest.java||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\java\\com\\example\\backend\\SignupRequest.java||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\BackendApplication.java||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\java\\com\\example\\backend\\BackendApplication.java||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\mvnw||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\mvnw||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\User.java||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\java\\com\\example\\backend\\User.java||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\application.properties||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\src\\main\\resources\\application.properties||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "dashboard.html",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\static\\dashboard.html",
+              "RelativeDocumentMoniker": "backend\\src\\main\\resources\\static\\dashboard.html",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\static\\dashboard.html",
+              "RelativeToolTip": "backend\\src\\main\\resources\\static\\dashboard.html",
+              "ViewState": "AQIAABAAAAAAAAAAAAAiwBcAAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-06-03T13:11:26.368Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "style.css",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\static\\css\\style.css",
+              "RelativeDocumentMoniker": "backend\\src\\main\\resources\\static\\css\\style.css",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\static\\css\\style.css",
+              "RelativeToolTip": "backend\\src\\main\\resources\\static\\css\\style.css",
+              "ViewState": "AQIAAJABAAAAAAAAAAAiwJoBAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-06-03T12:55:14.2Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "index.html",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\static\\index.html",
+              "RelativeDocumentMoniker": "backend\\src\\main\\resources\\static\\index.html",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\static\\index.html",
+              "RelativeToolTip": "backend\\src\\main\\resources\\static\\index.html",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-06-03T12:24:40.442Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "WebConfig.java",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\config\\WebConfig.java",
+              "RelativeDocumentMoniker": "backend\\src\\main\\java\\com\\example\\backend\\config\\WebConfig.java",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\config\\WebConfig.java",
+              "RelativeToolTip": "backend\\src\\main\\java\\com\\example\\backend\\config\\WebConfig.java",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-06-03T12:18:25.224Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SignupRequest.java",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\SignupRequest.java",
+              "RelativeDocumentMoniker": "backend\\src\\main\\java\\com\\example\\backend\\SignupRequest.java",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\SignupRequest.java",
+              "RelativeToolTip": "backend\\src\\main\\java\\com\\example\\backend\\SignupRequest.java",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-05-30T20:42:57.963Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AuthController.java",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\AuthController.java",
+              "RelativeDocumentMoniker": "backend\\src\\main\\java\\com\\example\\backend\\AuthController.java",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\AuthController.java",
+              "RelativeToolTip": "backend\\src\\main\\java\\com\\example\\backend\\AuthController.java",
+              "ViewState": "AQIAABIAAAAAAAAAAAAAACAAAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-05-30T20:43:39.864Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BackendApplication.java",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\BackendApplication.java",
+              "RelativeDocumentMoniker": "backend\\src\\main\\java\\com\\example\\backend\\BackendApplication.java",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\BackendApplication.java",
+              "RelativeToolTip": "backend\\src\\main\\java\\com\\example\\backend\\BackendApplication.java",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-05-30T22:27:35.777Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "mvnw",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\mvnw",
+              "RelativeDocumentMoniker": "backend\\mvnw",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\mvnw",
+              "RelativeToolTip": "backend\\mvnw",
+              "ViewState": "AQIAAAIAAAAAAAAAAAAuwAwAAAA8AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-05-30T22:38:14.183Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "application.properties",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\application.properties",
+              "RelativeDocumentMoniker": "backend\\src\\main\\resources\\application.properties",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\resources\\application.properties",
+              "RelativeToolTip": "backend\\src\\main\\resources\\application.properties",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-05-30T20:36:22.323Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UserRepository.java",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\UserRepository.java",
+              "RelativeDocumentMoniker": "backend\\src\\main\\java\\com\\example\\backend\\UserRepository.java",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\UserRepository.java",
+              "RelativeToolTip": "backend\\src\\main\\java\\com\\example\\backend\\UserRepository.java",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAOAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-05-30T20:41:42.462Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "User.java",
+              "DocumentMoniker": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\User.java",
+              "RelativeDocumentMoniker": "backend\\src\\main\\java\\com\\example\\backend\\User.java",
+              "ToolTip": "C:\\Users\\\uAE40\uB2E4\uBE48\\OneDrive\\\uBC14\uD0D5 \uD654\uBA74\\AutoStudy\\backend\\backend\\src\\main\\java\\com\\example\\backend\\User.java",
+              "RelativeToolTip": "backend\\src\\main\\java\\com\\example\\backend\\User.java",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAADMAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-05-30T20:40:16.805Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

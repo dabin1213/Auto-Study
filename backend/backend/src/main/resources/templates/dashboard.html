@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>AutoStudy Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .chart-row { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+        .chart-card {
+            flex: 1; min-width: 300px; background: #fff; padding: 20px;
+            border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .chart-card h3 { margin: 0 0 4px; font-size: 1rem; }
+        .chart-sub { font-size: 0.78rem; color: #888; margin-bottom: 16px; }
+        .bars { display: flex; align-items: flex-end; gap: 6px; }
+        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; cursor: pointer; }
+        .bar-col:hover .bar { opacity: 0.75; }
+        .bar-val { height: 16px; font-size: 0.72rem; color: #555; }
+        .bar-area { height: 130px; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
+        .bar { width: 70%; max-width: 30px; min-height: 2px; border-radius: 6px 6px 0 0; transition: opacity .15s; }
+        .bar-label { height: 18px; margin-top: 4px; font-size: 0.68rem; color: #888; white-space: nowrap; }
+        .chart-empty { color: #888; font-size: 0.9rem; padding: 50px 0; text-align: center; }
+
+        /* 마우스를 올리면 바로 뜨는 툴팁 */
+        .tip {
+            position: fixed; z-index: 1000; display: none; max-width: 260px;
+            padding: 8px 12px; background: #333; color: #fff;
+            font-size: 0.78rem; line-height: 1.5; border-radius: 8px;
+            white-space: pre-line; word-break: break-all;
+            pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        }
+
+        .team-section {
+            background: #e3f2fd; border: 2px solid #90caf9; border-radius: 10px;
+            padding: 20px; margin-bottom: 30px;
+        }
+        .team-section h3 { margin: 0 0 12px; font-size: 1rem; }
+        .team-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid #bbdefb; font-size: 0.9rem;
+        }
+        .team-row:last-child { border-bottom: none; }
+        .team-row a { color: #1565c0; font-weight: 700; text-decoration: none; }
+        .team-row a:hover { text-decoration: underline; }
+        .team-count { color: #555; font-size: 0.82rem; }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+   <a th:href="@{/home}" class="nav-logo">AutoStudy</a>
+    <div class="nav-menu">
+        <a th:href="@{/home}" th:class="${currentPage == 'home'} ? 'active' : ''">홈</a>
+        <a th:href="@{/quiz}" th:class="${currentPage == 'quiz'} ? 'active' : ''">퀴즈</a>
+        <a th:href="@{/team}" th:class="${currentPage == 'team'} ? 'active' : ''">팀</a>
+    </div>
+    
+    <div class="profile-container">
+        <div class="nav-avatar profile-icon" onclick="toggleMenu()" th:text="${nickname}">DB</div>
+        
+        <div id="profileMenu" class="profile-menu">
+            <div class="menu-item" onclick="changeColor()">프로필 색상 변경</div>
+            <div class="menu-item" onclick="location.href='/logout'">로그아웃</div>
+        </div>
+    </div>
+</nav>
+
+<div class="dashboard-layout" style="display: flex;">
+    <aside class="sidebar" style="width: 220px;">
+        <a th:href="@{/home}" th:class="${currentPage == 'home'} ? 'sidebar-item active' : 'sidebar-item'">홈</a>
+        <a th:href="@{/quiz}" th:class="${currentPage == 'quiz'} ? 'sidebar-item active' : 'sidebar-item'">퀴즈만들기</a>
+        <a th:href="@{/history}" th:class="${currentPage == 'history'} ? 'sidebar-item active' : 'sidebar-item'">학습이력</a>
+        <hr style="border:0; border-top:1px solid #ccc; margin:20px 0;">
+        <a th:href="@{/team}" th:class="${currentPage == 'team'} ? 'sidebar-item active' : 'sidebar-item'">팀</a>
+        <a th:href="@{/team/space}" th:class="${currentPage == 'teamspace'} ? 'sidebar-item active' : 'sidebar-item'">팀 공유 공간</a>
+    </aside>
+
+    <main class="dash-main" style="flex: 1; padding: 20px;">
+        <div class="stats-container" style="display: flex; gap: 20px; margin-bottom: 30px;">
+            <div class="stat-card" style="border: 2px solid #fff59d; background-color: #fffde7; flex: 1; padding: 20px; text-align: center; border-radius: 10px;">
+                <p>생성한 퀴즈</p>
+                <h2 id="statQuiz">-</h2>
+            </div>
+            <div class="stat-card" style="border: 2px solid #ce93d8; background-color: #f3e5f5; flex: 1; padding: 20px; text-align: center; border-radius: 10px;">
+                <p>평균 점수</p>
+                <h2 id="statAvg">-</h2>
+            </div>
+            <div class="stat-card" style="border: 2px solid #90caf9; background-color: #e3f2fd; flex: 1; padding: 20px; text-align: center; border-radius: 10px;">
+                <p>소속 팀</p>
+                <h2 id="statTeam">-</h2>
+            </div>
+        </div>
+
+        <div class="chart-row">
+            <div class="chart-card">
+                <h3>최근 점수 통계</h3>
+                <div class="chart-sub">최근 푼 퀴즈 10회의 점수 (왼쪽이 오래된 기록, 막대에 마우스를 올려보세요)</div>
+                <div id="trendChart"><div class="chart-empty">불러오는 중...</div></div>
+            </div>
+            <div class="chart-card">
+                <h3>최근 7일 푼 횟수</h3>
+                <div class="chart-sub">하루에 퀴즈를 푼 횟수</div>
+                <div id="dailyChart"><div class="chart-empty">불러오는 중...</div></div>
+            </div>
+        </div>
+
+        <div class="team-section">
+            <h3>소속 팀</h3>
+            <div id="teamList"><div class="chart-empty" style="padding:16px 0;">불러오는 중...</div></div>
+        </div>
+
+        <div class="history-section" style="background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <h3>최근 학습이력</h3>
+            <table class="history-table" style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #eee;">
+                        <th style="padding: 12px; text-align: left;">퀴즈 제목</th>
+                        <th style="padding: 12px; text-align: left;">점수</th>
+                        <th style="padding: 12px; text-align: left;">날짜</th>
+                        <th style="padding: 12px; text-align: left;">상태</th>
+                    </tr>
+                </thead>
+                <tbody id="recentBody">
+                    <tr>
+                        <td colspan="4" style="padding: 20px; text-align: center; color: #888;">불러오는 중...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<div id="tip" class="tip"></div>
+<script th:src="@{/js/common.js}"></script>
+<script>
+    
+    function toggleMenu() {
+        const menu = document.getElementById('profileMenu');
+        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function changeColor() {
+        const icon = document.querySelector('.nav-avatar');
+        const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+        icon.style.backgroundColor = randomColor;
+        localStorage.setItem('profileColor', randomColor);
+    }
+    function loadProfileColor() {
+        const savedColor = localStorage.getItem('profileColor');
+        if (savedColor) {
+            const icon = document.querySelector('.nav-avatar');
+            if (icon) {
+                icon.style.backgroundColor = savedColor;
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProfileColor();
+        loadDashboard();
+    });
+
+    // ---------- 툴팁 (마우스를 올리면 바로 뜨고, 마우스를 따라다님) ----------
+    function showTip(text, e) {
+        if (!text) return;
+        const tip = document.getElementById('tip');
+        tip.textContent = text;
+        tip.style.display = 'block';
+        moveTip(e);
+    }
+    function moveTip(e) {
+        const tip = document.getElementById('tip');
+        const x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+        tip.style.left = Math.max(8, x) + 'px';
+        tip.style.top = (e.clientY + 18) + 'px';
+    }
+    function hideTip() {
+        document.getElementById('tip').style.display = 'none';
+    }
+
+    // 표에 한 줄짜리 안내 문구를 넣는 함수
+    function showMessage(text) {
+        const body = document.getElementById('recentBody');
+        body.innerHTML = '';
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 4;
+        td.style.cssText = 'padding: 20px; text-align: center; color: #888;';
+        td.textContent = text;
+        tr.appendChild(td);
+        body.appendChild(tr);
+    }
+
+    // 표의 셀 하나를 만드는 함수 (글자는 textContent로 넣어서 안전하게 표시)
+    function makeCell(text, extraStyle) {
+        const td = document.createElement('td');
+        td.style.cssText = 'padding: 12px; border-bottom: 1px solid #eee;' + (extraStyle || '');
+        td.textContent = text;
+        return td;
+    }
+
+    // 안내 문구 한 줄 (그래프·팀 영역용)
+    function emptyBox(text, small) {
+        const d = document.createElement('div');
+        d.className = 'chart-empty';
+        if (small) d.style.padding = '16px 0';
+        d.textContent = text;
+        return d;
+    }
+
+    // 막대그래프 그리기. items: [{label, value, title}], max: 막대 100%에 해당하는 값
+    function drawBars(container, items, max, color, unit) {
+        container.innerHTML = '';
+        const bars = document.createElement('div');
+        bars.className = 'bars';
+
+        items.forEach(it => {
+            const col = document.createElement('div');
+            col.className = 'bar-col';
+            col.onmouseenter = e => showTip(it.title, e);
+            col.onmousemove = e => moveTip(e);
+            col.onmouseleave = hideTip;
+
+            const val = document.createElement('div');
+            val.className = 'bar-val';
+            val.textContent = it.value + unit;
+
+            const area = document.createElement('div');
+            area.className = 'bar-area';
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            bar.style.height = Math.min(100, it.value / max * 100) + '%';
+            bar.style.background = it.value > 0 ? color : '#eee';
+            area.appendChild(bar);
+
+            const label = document.createElement('div');
+            label.className = 'bar-label';
+            label.textContent = it.label;
+
+            col.append(val, area, label);
+            bars.appendChild(col);
+        });
+        container.appendChild(bars);
+    }
+
+    // "2026-09-28" → "09-28"
+    function shortDate(iso) {
+        return iso ? iso.slice(5) : '-';
+    }
+
+    function drawTeams(teams) {
+        const box = document.getElementById('teamList');
+        box.innerHTML = '';
+        if (!teams || teams.length === 0) {
+            box.appendChild(emptyBox('아직 참가한 팀이 없어요. 팀 화면에서 만들거나 초대 코드로 참가해보세요.', true));
+            return;
+        }
+        teams.forEach(t => {
+            const row = document.createElement('div');
+            row.className = 'team-row';
+
+            const link = document.createElement('a');
+            link.href = '/team/space?teamId=' + t.teamId;
+            link.textContent = t.teamName;
+
+            const count = document.createElement('span');
+            count.className = 'team-count';
+            count.textContent = '멤버 ' + t.memberCount + '명';
+
+            row.append(link, count);
+            box.appendChild(row);
+        });
+    }
+
+    async function loadDashboard() {
+        try {
+            const res = await fetch('/dashboard');
+            if (res.status === 401) {
+                document.getElementById('statQuiz').textContent = '-';
+                document.getElementById('statAvg').textContent = '-';
+                document.getElementById('statTeam').textContent = '-';
+                document.getElementById('trendChart').replaceChildren(emptyBox('로그인이 필요합니다.'));
+                document.getElementById('dailyChart').replaceChildren(emptyBox('로그인이 필요합니다.'));
+                document.getElementById('teamList').replaceChildren(emptyBox('로그인이 필요합니다.', true));
+                showMessage('로그인이 필요합니다.');
+                return;
+            }
+            const data = await res.json();
+
+            // 통계 카드
+            document.getElementById('statQuiz').textContent = data.quiz_count;
+            // 아직 푼 퀴즈가 없으면 0% 대신 '-'
+            document.getElementById('statAvg').textContent =
+                data.solved_count > 0 ? data.avg_score + '%' : '-';
+            document.getElementById('statTeam').textContent = data.team_count;
+
+            // 그래프 1: 최근 점수 추이 (툴팁: 자료 이름 / 점수 · 날짜)
+            const trendBox = document.getElementById('trendChart');
+            if (!data.score_trend || data.score_trend.length === 0) {
+                trendBox.replaceChildren(emptyBox('아직 푼 퀴즈가 없어요. 퀴즈를 끝까지 풀면 점수가 쌓여요.'));
+            } else {
+                drawBars(trendBox, data.score_trend.map(s => ({
+                    label: shortDate(s.date),
+                    value: s.score,
+                    title: s.fileName + '\n' + s.score + '점 · ' + s.date
+                })), 100, '#ce93d8', '');
+            }
+
+            // 그래프 2: 최근 7일 푼 횟수 (툴팁: 날짜 / 횟수)
+            const dailyBox = document.getElementById('dailyChart');
+            if (data.solved_count === 0) {
+                dailyBox.replaceChildren(emptyBox('아직 푼 퀴즈가 없어요.'));
+            } else {
+                const maxCount = Math.max(3, ...data.daily.map(d => d.count));
+                drawBars(dailyBox, data.daily.map(d => ({
+                    label: shortDate(d.date),
+                    value: d.count,
+                    title: d.date + '\n' + d.count + '회 풀었어요'
+                })), maxCount, '#ffd54f', '');
+            }
+
+            // 소속 팀
+            drawTeams(data.teams);
+
+            // 최근 학습이력 표
+            const body = document.getElementById('recentBody');
+            body.innerHTML = '';
+
+            if (!data.recent || data.recent.length === 0) {
+                showMessage('아직 만든 퀴즈가 없어요. 퀴즈 만들기에서 PDF를 올려보세요.');
+                return;
+            }
+
+            data.recent.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.appendChild(makeCell(r.fileName));
+                tr.appendChild(makeCell(r.score == null ? '-' : r.score + '점'));
+                tr.appendChild(makeCell(r.createdAt ? r.createdAt.slice(0, 10) : '-'));
+
+                const done = (r.status === '완료');
+                tr.appendChild(makeCell(
+                    r.status,
+                    'font-weight: bold; color: ' + (done ? '#2e7d32' : '#f57c00') + ';'
+                ));
+                body.appendChild(tr);
+            });
+        } catch (err) {
+            document.getElementById('trendChart').replaceChildren(emptyBox('서버 연결 실패'));
+            document.getElementById('dailyChart').replaceChildren(emptyBox('서버 연결 실패'));
+            document.getElementById('teamList').replaceChildren(emptyBox('서버 연결 실패', true));
+            showMessage('서버 연결 실패');
+        }
+    }
+    
+</script>
+
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>팀 – AutoStudy</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .box {
+            background: #fff;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            padding: 32px;
+            width: 100%;
+            box-shadow: var(--shadow);
+        }
+        .head-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .head-row h2 { font-size: 1.2rem; font-weight: 700; margin: 0; }
+        .head-btns { display: flex; gap: 8px; }
+        .btn-line {
+            padding: 8px 16px; border-radius: 8px; border: 1.5px solid var(--teal);
+            background: #fff; color: var(--teal); font-size: 0.85rem; font-weight: 600; cursor: pointer;
+        }
+        .btn-line:hover { background: var(--teal); color: #fff; }
+        .btn-fill {
+            padding: 10px 20px; border-radius: 8px; border: none;
+            background: var(--teal); color: #fff; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+        }
+        .btn-fill:hover { background: var(--teal-dark); }
+
+        .panel {
+            display: none;
+            border: 1.5px solid var(--border); border-radius: 10px;
+            padding: 20px; margin-bottom: 20px; background: var(--teal-light);
+        }
+        .panel label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+        .panel input, .panel textarea {
+            width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
+            border-radius: 8px; font-size: 0.9rem; outline: none; margin-bottom: 14px;
+            box-sizing: border-box; font-family: inherit; background: #fff;
+        }
+        .panel textarea { height: 80px; resize: vertical; }
+        .panel input:focus, .panel textarea:focus { border-color: var(--teal); }
+
+        .team-card {
+            border: 1.5px solid var(--border); border-radius: 10px;
+            padding: 16px 20px; margin-bottom: 12px; background: var(--teal-light);
+        }
+        .team-name { font-weight: 700; font-size: 1rem; }
+        .team-desc { font-size: 0.84rem; color: var(--text-muted); margin-top: 4px; }
+        .team-meta { font-size: 0.8rem; color: var(--text-muted); margin: 8px 0 12px; }
+        .team-btns { display: flex; gap: 8px; }
+        .empty { color: var(--text-muted); font-size: 0.9rem; padding: 20px 0; }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+   <a th:href="@{/home}" class="nav-logo">AutoStudy</a>
+    <div class="nav-menu">
+        <a th:href="@{/home}"
+           th:class="${currentPage == 'home'} ? 'active' : ''">홈</a>
+        <a th:href="@{/quiz}"
+           th:class="${currentPage == 'quiz'} ? 'active' : ''">퀴즈</a>
+        <a th:href="@{/team}"
+           th:class="${currentPage == 'team'} ? 'active' : ''">팀</a>
+    </div>
+    <div class="profile-container">
+        <div class="nav-avatar profile-icon" onclick="toggleMenu()" th:text="${nickname}">DB</div>
+        <div id="profileMenu" class="profile-menu">
+            <div class="menu-item" onclick="changeColor()">프로필 색상 변경</div>
+            <div class="menu-item" onclick="location.href='/logout'">로그아웃</div>
+        </div>
+    </div>
+</nav>
+
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <a th:href="@{/home}"
+           th:class="${currentPage == 'home'} ? 'sidebar-item active' : 'sidebar-item'">홈</a>
+        <a th:href="@{/quiz}"
+           th:class="${currentPage == 'quiz'} ? 'sidebar-item active' : 'sidebar-item'">퀴즈만들기</a>
+        <a th:href="@{/history}"
+           th:class="${currentPage == 'history'} ? 'sidebar-item active' : 'sidebar-item'">학습이력</a>
+        <hr style="border:0; border-top:1px solid #ccc; margin:20px 0;">
+        <a th:href="@{/team}"
+           th:class="${currentPage == 'team'} ? 'sidebar-item active' : 'sidebar-item'">팀</a>
+        <a th:href="@{/team/space}"
+           th:class="${currentPage == 'teamspace'} ? 'sidebar-item active' : 'sidebar-item'">팀 공유 공간</a>
+    </aside>
+
+    <main class="dash-main">
+        <div class="box">
+            <div class="head-row">
+                <h2>내 팀</h2>
+                <div class="head-btns">
+                    <button class="btn-line" onclick="showPanel('join')">코드로 참가</button>
+                    <button class="btn-line" onclick="showPanel('create')">+ 팀 만들기</button>
+                </div>
+            </div>
+
+            <div class="panel" id="createPanel">
+                <label for="teamName">팀 이름</label>
+                <input type="text" id="teamName" maxlength="100" placeholder="예) 컴퓨터정보 스터디">
+                <label for="teamDesc">팀 소개 (선택)</label>
+                <textarea id="teamDesc" maxlength="255" placeholder="스터디 목적이나 소개를 입력하세요."></textarea>
+                <button class="btn-fill" onclick="createTeam()">팀 만들기</button>
+            </div>
+
+            <div class="panel" id="joinPanel">
+                <label for="inviteCode">초대 코드</label>
+                <input type="text" id="inviteCode" maxlength="20" placeholder="받은 초대 코드를 입력하세요">
+                <button class="btn-fill" onclick="joinTeam()">이 팀에 참가하기</button>
+            </div>
+
+            <div id="teamList"><div class="empty">불러오는 중...</div></div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/common.js}"></script>
+<script>
+function toggleMenu() {
+    const menu = document.getElementById('profileMenu');
+    menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+}
+document.addEventListener('DOMContentLoaded', () => { loadProfileColor(); loadTeams(); });
+function changeColor() {
+    const icon = document.querySelector('.nav-avatar');
+    const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+    icon.style.backgroundColor = randomColor;
+    localStorage.setItem('profileColor', randomColor);
+}
+function loadProfileColor() {
+    const savedColor = localStorage.getItem('profileColor');
+    if (savedColor) {
+        const icon = document.querySelector('.nav-avatar');
+        if (icon) icon.style.backgroundColor = savedColor;
+    }
+}
+
+function showPanel(which) {
+    const create = document.getElementById('createPanel');
+    const join = document.getElementById('joinPanel');
+    const target = which === 'create' ? create : join;
+    const other = which === 'create' ? join : create;
+    other.style.display = 'none';
+    target.style.display = (target.style.display === 'block') ? 'none' : 'block';
+}
+
+async function loadTeams() {
+    const list = document.getElementById('teamList');
+    try {
+        const res = await fetch('/team/list');
+        if (res.status === 401) {
+            list.innerHTML = '<div class="empty">로그인이 필요합니다.</div>';
+            return;
+        }
+        const data = await res.json();
+        list.innerHTML = '';
+
+        if (!data.teams || data.teams.length === 0) {
+            list.innerHTML = '<div class="empty">아직 참가한 팀이 없어요. 팀을 만들거나 초대 코드로 참가해보세요.</div>';
+            return;
+        }
+
+        data.teams.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'team-card';
+
+            const name = document.createElement('div');
+            name.className = 'team-name';
+            name.textContent = t.teamName;
+            card.appendChild(name);
+
+            if (t.description) {
+                const desc = document.createElement('div');
+                desc.className = 'team-desc';
+                desc.textContent = t.description;
+                card.appendChild(desc);
+            }
+
+            const meta = document.createElement('div');
+            meta.className = 'team-meta';
+            meta.textContent = `멤버 ${t.memberCount}명 · 공유 자료 ${t.contentCount}개 · 초대코드 ${t.inviteCode}`;
+            card.appendChild(meta);
+
+            const btns = document.createElement('div');
+            btns.className = 'team-btns';
+
+            const spaceBtn = document.createElement('button');
+            spaceBtn.className = 'btn-line';
+            spaceBtn.textContent = '공유 공간 보기';
+            spaceBtn.onclick = () => { location.href = '/team/space?teamId=' + t.teamId; };
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'btn-line';
+            copyBtn.textContent = '초대코드 복사';
+            copyBtn.onclick = () => copyCode(t.inviteCode, copyBtn);
+
+            btns.append(spaceBtn, copyBtn);
+            card.appendChild(btns);
+            list.appendChild(card);
+        });
+    } catch (err) {
+        list.innerHTML = '<div class="empty">서버 연결 실패</div>';
+    }
+}
+
+async function copyCode(code, btn) {
+    try {
+        await navigator.clipboard.writeText(code);
+        const original = btn.textContent;
+        btn.textContent = '복사됨 ✓';
+        setTimeout(() => { btn.textContent = original; }, 1500);
+    } catch (err) {
+        prompt('초대코드를 복사하세요', code);
+    }
+}
+
+async function createTeam() {
+    const teamName = document.getElementById('teamName').value.trim();
+    const description = document.getElementById('teamDesc').value.trim();
+    if (!teamName) {
+        alert('팀 이름을 입력해주세요.');
+        return;
+    }
+    try {
+        const res = await fetch('/team', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ teamName: teamName, description: description })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.message || data.error || '팀 만들기에 실패했어요.');
+            return;
+        }
+        alert('팀이 만들어졌어요!\n초대코드: ' + data.invite_code);
+        document.getElementById('teamName').value = '';
+        document.getElementById('teamDesc').value = '';
+        document.getElementById('createPanel').style.display = 'none';
+        loadTeams();
+    } catch (err) {
+        alert('서버 연결 실패');
+    }
+}
+
+async function joinTeam() {
+    const inviteCode = document.getElementById('inviteCode').value.trim();
+    if (!inviteCode) {
+        alert('초대 코드를 입력해주세요.');
+        return;
+    }
+    try {
+        const res = await fetch('/team/join', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ inviteCode: inviteCode })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            alert(data.message || data.error || '참가에 실패했어요.');
+            return;
+        }
+        alert(data.team_name + ' 팀에 참가했어요!');
+        document.getElementById('inviteCode').value = '';
+        document.getElementById('joinPanel').style.display = 'none';
+        loadTeams();
+    } catch (err) {
+        alert('서버 연결 실패');
+    }
+}
+</script>
+</body>
+</html>
