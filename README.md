@@ -98,5 +98,5 @@ cd backend/backend
 
 ## 개발자
 
-**김다빈** · 대전보건대학교 컴퓨터정보과
+**김다빈** · 
 GitHub [@dabin1213](https://github.com/dabin1213)
